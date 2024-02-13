@@ -1,44 +1,27 @@
-import { useAccount, useConnect, useDisconnect } from 'wagmi'
+import { Box, Flex, Text, Heading } from '@chakra-ui/react'
+import { useAccount } from 'wagmi'
+import { ConnectButton } from '@rainbow-me/rainbowkit'
 
 function App() {
   const account = useAccount()
-  const { connectors, connect, status, error } = useConnect()
-  const { disconnect } = useDisconnect()
 
   return (
     <>
-      <div>
-        <h2>Account</h2>
+      <Box minW="100vw" minH="100vh" bg="grey.100">
+        <Flex alignItems="center" justifyContent="space-between" p={4} w="100%">
+          <ConnectButton />
+        </Flex>
 
-        <div>
+        <Heading>Account</Heading>
+
+        <Box>
           status: {account.status}
           <br />
           addresses: {JSON.stringify(account.addresses)}
           <br />
           chainId: {account.chainId}
-        </div>
-
-        {account.status === 'connected' && (
-          <button type="button" onClick={() => disconnect()}>
-            Disconnect
-          </button>
-        )}
-      </div>
-
-      <div>
-        <h2>Connect</h2>
-        {connectors.map((connector) => (
-          <button
-            key={connector.uid}
-            onClick={() => connect({ connector })}
-            type="button"
-          >
-            {connector.name}
-          </button>
-        ))}
-        <div>{status}</div>
-        <div>{error?.message}</div>
-      </div>
+        </Box>
+      </Box>
     </>
   )
 }

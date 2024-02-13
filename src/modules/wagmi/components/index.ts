@@ -1,3 +1,4 @@
 import { WagmiProvider } from './WagmiProvider'
+import { RainbowKitProvider } from './RainbowKitProvider'
 
-export { WagmiProvider }
+export { WagmiProvider, RainbowKitProvider }
