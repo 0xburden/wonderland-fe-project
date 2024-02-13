@@ -5,8 +5,6 @@ import { Providers } from './Providers'
 
 import App from './App.tsx'
 
-import './index.css'
-
 globalThis.Buffer = Buffer
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
