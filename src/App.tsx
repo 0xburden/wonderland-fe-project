@@ -1,21 +1,20 @@
-import { Heading, Box } from '@chakra-ui/react'
+import { Heading, Flex, Box } from '@chakra-ui/react'
 import { useAccount } from 'wagmi'
-import { Layout } from './modules/global/components'
+import { Layout, Disconnected } from './modules/global/components'
 
 function App() {
-  const account = useAccount()
+  const { isConnected } = useAccount()
 
   return (
     <Layout>
-      <Heading>Account</Heading>
-
-      <Box>
-        status: {account.status}
-        <br />
-        addresses: {JSON.stringify(account.addresses)}
-        <br />
-        chainId: {account.chainId}
-      </Box>
+      {isConnected ? (
+        <Flex alignItems="center" justifyContent="center" direction="column">
+          <Heading textAlign="center">Do Things</Heading>
+          <Box>things go here</Box>
+        </Flex>
+      ) : (
+        <Disconnected />
+      )}
     </Layout>
   )
 }
