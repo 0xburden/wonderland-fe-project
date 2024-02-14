@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { type Address } from '../../../contstants'
+import { type Address } from '../../../../contstants'
 
 interface TokenState {
   value: null | Address
