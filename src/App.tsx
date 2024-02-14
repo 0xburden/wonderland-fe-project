@@ -1,6 +1,7 @@
-import { Heading, Flex, Box } from '@chakra-ui/react'
+import { Flex } from '@chakra-ui/react'
 import { useAccount } from 'wagmi'
 import { Layout, Disconnected } from './modules/global/components'
+import { TransferForm } from './modules/transfer/components'
 
 function App() {
   const { isConnected } = useAccount()
@@ -9,8 +10,7 @@ function App() {
     <Layout>
       {isConnected ? (
         <Flex alignItems="center" justifyContent="center" direction="column">
-          <Heading textAlign="center">Do Things</Heading>
-          <Box>things go here</Box>
+          <TransferForm />
         </Flex>
       ) : (
         <Disconnected />

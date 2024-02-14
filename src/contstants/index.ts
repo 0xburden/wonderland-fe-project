@@ -1,3 +1,5 @@
-import { DAI_ADDRESS, USDC_ADDRESS } from './addresses'
+import { T18_ADDRESS, T6_ADDRESS } from './addresses'
 
-export { DAI_ADDRESS, USDC_ADDRESS }
+export type Address = `0x${string}`
+
+export { T18_ADDRESS, T6_ADDRESS }
