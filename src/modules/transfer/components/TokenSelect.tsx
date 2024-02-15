@@ -1,20 +1,24 @@
 import React from 'react'
 import { Menu, MenuButton, MenuList, MenuItem, Button } from '@chakra-ui/react'
 import { useAppSelector, useAppDispatch } from '../../redux/hooks'
-import { clear } from '../../redux/slices/token'
+import { clear as clearToken } from '../../redux/slices/token'
+import { clear as clearTokenInfo } from '../../redux/slices/tokenInfo'
 import { TokenSelectMenuItem } from './TokenSelectMenuItem'
 import { TOKEN_ADDRESSES } from '../../../contstants'
 
 export function TokenSelect() {
-  const token = useAppSelector((state) => state.token.value)
+  const tokenInfo = useAppSelector((state) => state.tokenInfo.value)
   const dispatch = useAppDispatch()
 
-  const handleClearSelection = React.useCallback(() => dispatch(clear()), [dispatch])
+  const handleClearSelection = React.useCallback(() => {
+    dispatch(clearToken())
+    dispatch(clearTokenInfo())
+  }, [dispatch])
 
   return (
     <Menu>
       <MenuButton as={Button} type="button" w="100%">
-        {token ? 'token name' : 'Select Token'}
+        {tokenInfo ? `${tokenInfo?.symbol} ${tokenInfo?.name}` : 'Select Token'}
       </MenuButton>
       <MenuList w="100%">
         <MenuItem as={Button} onClick={handleClearSelection}>

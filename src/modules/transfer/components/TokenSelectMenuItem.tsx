@@ -2,6 +2,7 @@ import React from 'react'
 import { useReadContracts } from 'wagmi'
 import { erc20Abi } from 'viem'
 import { selectToken } from '../../redux/slices/token'
+import { setTokenInfo } from '../../redux/slices/tokenInfo'
 import { MenuItem, Button } from '@chakra-ui/react'
 import { type MenuItemProps } from '@chakra-ui/react'
 import { useAppSelector, useAppDispatch } from '../../redux/hooks'
@@ -51,7 +52,13 @@ export function TokenSelectMenuItem({ address, ...props }: TokenSelectMenuItemPr
     }
   }, [data])
 
-  const handleSelect = React.useCallback(() => dispatch(selectToken(address)), [dispatch, address])
+  const handleSelect = React.useCallback(() => {
+    dispatch(selectToken(address))
+
+    if (tokenInfo) {
+      dispatch(setTokenInfo(tokenInfo))
+    }
+  }, [dispatch, address, tokenInfo])
 
   return (
     <MenuItem as={Button} {...props} isDisabled={address === token} onClick={handleSelect}>
