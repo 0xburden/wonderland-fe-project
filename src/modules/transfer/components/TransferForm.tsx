@@ -33,7 +33,7 @@ export function TransferForm() {
   const dispatch = useAppDispatch();
 
   const targetAddress = useAppSelector((state) => state.targetAddress);
-  const { address: userAddress } = useAccount();
+  const { address: userAddress, isConnected } = useAccount();
 
   const [amount, setAmount] = React.useState(0);
 
@@ -212,6 +212,7 @@ export function TransferForm() {
               w="full"
               isLoading={isApproving || isConfirmingApproval}
               isDisabled={
+                !isConnected ||
                 !targetAddress.isValid ||
                 isApproving ||
                 isConfirmingApproval ||
@@ -228,6 +229,7 @@ export function TransferForm() {
               w="full"
               isLoading={isTransferring || isConfirmingTransfer}
               isDisabled={
+                !isConnected ||
                 !targetAddress.isValid ||
                 isTransferring ||
                 isConfirmingTransfer ||
