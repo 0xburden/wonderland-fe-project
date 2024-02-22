@@ -12,6 +12,9 @@ import {
   Input,
   NumberInput,
   NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
   Button,
   Heading,
 } from "@chakra-ui/react";
@@ -112,6 +115,13 @@ export function TransferForm() {
   const isAddressInvalid =
     targetAddress.value.length > 0 && !targetAddress.isValid;
 
+  const isAmountInvalid = React.useMemo(() => {
+    if (amount) {
+      return allowance < amount;
+    }
+    return false;
+  }, [allowance, amount]);
+
   return (
     <Box maxW="32rem" w="100%" px={4}>
       <Card>
@@ -121,127 +131,145 @@ export function TransferForm() {
         <Box as="form" method="post">
           <CardBody>
             <TokenSelect />
-            <FormControl mt={2}>
-              <FormLabel
-                htmlFor="allowance"
-                fontWeight="bold"
-                fontSize="sm"
-                color="blackAlpha.800"
-              >
-                Allowance:
-              </FormLabel>
-              <NumberInput min={0} value={allowance} isDisabled>
-                <NumberInputField
-                  name="allowance"
-                  readOnly
-                  _disabled={{
-                    opacity: 1,
-                    cursor: "not-allowed",
-                    bg: "blackAlpha.100",
-                  }}
-                />
-              </NumberInput>
-            </FormControl>
-            <FormControl mt={2}>
-              <FormLabel
-                htmlFor="allowance"
-                fontWeight="bold"
-                fontSize="sm"
-                color="blackAlpha.800"
-              >
-                Balance:
-              </FormLabel>
-              <NumberInput min={0} value={balance}>
-                <NumberInputField name="balance" readOnly />
-              </NumberInput>
-            </FormControl>
-            <FormControl mt={12} isInvalid={isAddressInvalid}>
-              <FormLabel
-                htmlFor="targetAddress"
-                fontWeight="bold"
-                fontSize="sm"
-                color="blackAlpha.800"
-              >
-                Target Wallet:
-              </FormLabel>
-              <Input
-                name="targetAddress"
-                value={targetAddress.value}
-                onChange={(e) => dispatch(setTargetAddress(e.target.value))}
-                placeholder="0x1D70D57ccD2798323232B2dD027B3aBcA5C00091"
-              />
-              {isAddressInvalid ? (
-                <FormErrorMessage>Address is not valid!</FormErrorMessage>
-              ) : (
-                <>
-                  {targetAddress.isValid ? (
-                    <FormHelperText>Validated Address!</FormHelperText>
+            {token ? (
+              <>
+                <FormControl mt={8}>
+                  <FormLabel
+                    htmlFor="allowance"
+                    fontWeight="bold"
+                    fontSize="sm"
+                    color="blackAlpha.800"
+                  >
+                    Allowance:
+                  </FormLabel>
+                  <NumberInput min={0} value={allowance} isDisabled>
+                    <NumberInputField
+                      name="allowance"
+                      readOnly
+                      _disabled={{
+                        opacity: 1,
+                        cursor: "not-allowed",
+                        bg: "blackAlpha.100",
+                      }}
+                    />
+                  </NumberInput>
+                </FormControl>
+                <FormControl mt={2}>
+                  <FormLabel
+                    htmlFor="allowance"
+                    fontWeight="bold"
+                    fontSize="sm"
+                    color="blackAlpha.800"
+                  >
+                    Balance:
+                  </FormLabel>
+                  <NumberInput min={0} value={balance}>
+                    <NumberInputField name="balance" readOnly />
+                  </NumberInput>
+                </FormControl>
+                <FormControl mt={12} isRequired isInvalid={isAddressInvalid}>
+                  <FormLabel
+                    htmlFor="targetAddress"
+                    fontWeight="bold"
+                    fontSize="sm"
+                    color="blackAlpha.800"
+                  >
+                    Target Wallet:
+                  </FormLabel>
+                  <Input
+                    name="targetAddress"
+                    value={targetAddress.value}
+                    onChange={(e) => dispatch(setTargetAddress(e.target.value))}
+                    placeholder="0x1D70D57ccD2798323232B2dD027B3aBcA5C00091"
+                  />
+                  {isAddressInvalid ? (
+                    <FormErrorMessage>Address is not valid!</FormErrorMessage>
+                  ) : (
+                    <>
+                      {targetAddress.isValid ? (
+                        <FormHelperText>Validated Address!</FormHelperText>
+                      ) : (
+                        <FormHelperText>
+                          Enter the address you want to transfer tokens to.
+                        </FormHelperText>
+                      )}
+                    </>
+                  )}
+                </FormControl>
+                <FormControl mt={4} isInvalid={isAmountInvalid} isRequired>
+                  <FormLabel
+                    htmlFor="amount"
+                    fontWeight="bold"
+                    fontSize="sm"
+                    color="blackAlpha.800"
+                  >
+                    Amount:
+                  </FormLabel>
+                  <NumberInput
+                    min={0}
+                    max={balance}
+                    onChange={(value) => setAmount(Number(value))}
+                    defaultValue={0}
+                  >
+                    <NumberInputField name="amount" value={amount} />
+                    <NumberInputStepper>
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
+                    </NumberInputStepper>
+                  </NumberInput>
+                  {isAmountInvalid ? (
+                    <FormErrorMessage>
+                      Must approve this amount of tokens before you can
+                      transfer.
+                    </FormErrorMessage>
                   ) : (
                     <FormHelperText>
-                      Enter the address you want to transfer tokens to.
+                      Enter the amount of tokens to transfer.
                     </FormHelperText>
                   )}
-                </>
-              )}
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel
-                htmlFor="amount"
-                fontWeight="bold"
-                fontSize="sm"
-                color="blackAlpha.800"
-              >
-                Amount:
-              </FormLabel>
-              <NumberInput min={0} max={balance}>
-                <NumberInputField
-                  onChange={(e) => setAmount(Number(e.target.value))}
-                  value={amount}
-                  name="amount"
-                />
-              </NumberInput>
-              <FormHelperText>
-                Enter the amount of tokens to transfer.
-              </FormHelperText>
-            </FormControl>
+                </FormControl>
+              </>
+            ) : null}
           </CardBody>
-          <CardFooter gap={4}>
-            <Button
-              type="button"
-              colorScheme="yellow"
-              w="full"
-              isLoading={isApproving || isConfirmingApproval}
-              isDisabled={
-                !isConnected ||
-                !targetAddress.isValid ||
-                isApproving ||
-                isConfirmingApproval ||
-                (allowance >= amount && allowance > 0) ||
-                !token
-              }
-              onClick={() => approve()}
-            >
-              Approve
-            </Button>
-            <Button
-              type="button"
-              colorScheme="blue"
-              w="full"
-              isLoading={isTransferring || isConfirmingTransfer}
-              isDisabled={
-                !isConnected ||
-                !targetAddress.isValid ||
-                isTransferring ||
-                isConfirmingTransfer ||
-                allowance < amount ||
-                !amount ||
-                !token
-              }
-              onClick={() => transfer()}
-            >
-              Transfer
-            </Button>
-          </CardFooter>
+          {token ? (
+            <CardFooter gap={4}>
+              <Button
+                type="button"
+                colorScheme="yellow"
+                w="full"
+                isLoading={isApproving || isConfirmingApproval}
+                isDisabled={
+                  !isConnected ||
+                  !targetAddress.isValid ||
+                  isApproving ||
+                  isConfirmingApproval ||
+                  (allowance >= amount && allowance > 0) ||
+                  !token
+                }
+                onClick={() => approve()}
+              >
+                Approve
+              </Button>
+              <Button
+                type="button"
+                colorScheme="blue"
+                w="full"
+                isLoading={isTransferring || isConfirmingTransfer}
+                isDisabled={
+                  !isConnected ||
+                  !targetAddress.isValid ||
+                  isTransferring ||
+                  isConfirmingTransfer ||
+                  allowance < amount ||
+                  !amount ||
+                  !token
+                }
+                onClick={() => transfer()}
+              >
+                Transfer
+              </Button>
+            </CardFooter>
+          ) : null}
         </Box>
       </Card>
     </Box>
