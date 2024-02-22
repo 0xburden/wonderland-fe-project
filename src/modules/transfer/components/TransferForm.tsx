@@ -109,8 +109,8 @@ export function TransferForm() {
     [balanceData, tokenInfo]
   );
 
-  const isAddressValid =
-    targetAddress.isValid && targetAddress.value.length > 0;
+  const isAddressInvalid =
+    targetAddress.value.length > 0 && !targetAddress.isValid;
 
   return (
     <Box maxW="32rem" w="100%" px={4}>
@@ -155,7 +155,7 @@ export function TransferForm() {
                 <NumberInputField name="balance" readOnly />
               </NumberInput>
             </FormControl>
-            <FormControl mt={12} isInvalid={!isAddressValid}>
+            <FormControl mt={12} isInvalid={isAddressInvalid}>
               <FormLabel
                 htmlFor="targetAddress"
                 fontWeight="bold"
@@ -170,12 +170,18 @@ export function TransferForm() {
                 onChange={(e) => dispatch(setTargetAddress(e.target.value))}
                 placeholder="0x1D70D57ccD2798323232B2dD027B3aBcA5C00091"
               />
-              {isAddressValid ? (
-                <FormHelperText>
-                  Enter the address you want to transfer tokens to.
-                </FormHelperText>
-              ) : (
+              {isAddressInvalid ? (
                 <FormErrorMessage>Address is not valid!</FormErrorMessage>
+              ) : (
+                <>
+                  {targetAddress.isValid ? (
+                    <FormHelperText>Validated Address!</FormHelperText>
+                  ) : (
+                    <FormHelperText>
+                      Enter the address you want to transfer tokens to.
+                    </FormHelperText>
+                  )}
+                </>
               )}
             </FormControl>
             <FormControl mt={4}>
@@ -209,7 +215,8 @@ export function TransferForm() {
                 !targetAddress.isValid ||
                 isApproving ||
                 isConfirmingApproval ||
-                (allowance >= amount && allowance > 0)
+                (allowance >= amount && allowance > 0) ||
+                !token
               }
               onClick={() => approve()}
             >
@@ -225,7 +232,8 @@ export function TransferForm() {
                 isTransferring ||
                 isConfirmingTransfer ||
                 allowance < amount ||
-                !amount
+                !amount ||
+                !token
               }
               onClick={() => transfer()}
             >
