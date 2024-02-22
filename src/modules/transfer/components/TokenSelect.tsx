@@ -16,12 +16,12 @@ export function TokenSelect() {
   }, [dispatch])
 
   return (
-    <Menu>
+    <Menu matchWidth>
       <MenuButton as={Button} type="button" w="100%">
         {tokenInfo ? `${tokenInfo?.symbol} ${tokenInfo?.name}` : 'Select Token'}
       </MenuButton>
-      <MenuList w="100%">
-        <MenuItem as={Button} onClick={handleClearSelection}>
+      <MenuList>
+        <MenuItem as={Button} onClick={handleClearSelection} w="100%">
           Select Token
         </MenuItem>
         {TOKEN_ADDRESSES.map((address) => (
